@@ -54,7 +54,6 @@ def precipitation():
         all_results.append(result_dict)
 
     #print(twelve_months)
-    #results = list(twelve_months)
     return jsonify(all_results)
 
 # /api/v1.0/stations
@@ -67,7 +66,7 @@ def stations():
     session.close()
 
     #print(twelve_months)
-    results = list(stations)
+    results = list(np.ravel(stations))
     return jsonify(results)
 
 # /api/v1.0/tobs
@@ -80,10 +79,13 @@ def tobs():
     most_act_twelve_months = session.query(Measurement.date, Measurement.tobs).filter(Measurement.date > most_act_query_date).filter(Measurement.station == most_active).order_by(Measurement.date).all()
 
     session.close()
+    all_tobs = []
+    for result in most_act_twelve_months:
+        all_tobs.append(result[1])
 
-    #print(twelve_months)
-    results = list(most_act_twelve_months)
-    return jsonify(results)
+    print(most_act_twelve_months)
+    #results = list(np.ravel(most_act_twelve_months))
+    return jsonify(all_tobs)
 
 # /api/v1.0/<start> and /api/v1.0/<start>/<end>
 
