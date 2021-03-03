@@ -1,5 +1,6 @@
 # import dependencies
 import numpy as np
+import datetime as dt
 
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
@@ -36,6 +37,18 @@ def welcome():
     )
 
 # /api/v1.0/precipitation
+@app.route("/api/v1.0/precipitation")
+def precipitation():
+    session=Session(engine)
+
+    query_date = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+    twelve_months = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date > query_date).order_by(Measurement.date).all()
+
+    session.close()
+
+    #print(twelve_months)
+    results = list(np.ravel(twelve_months))
+    return jsonify(results)
 
 # /api/v1.0/stations
 
