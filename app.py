@@ -83,12 +83,44 @@ def tobs():
     for result in most_act_twelve_months:
         all_tobs.append(result[1])
 
-    print(most_act_twelve_months)
+    #print(most_act_twelve_months)
     #results = list(np.ravel(most_act_twelve_months))
     return jsonify(all_tobs)
 
 # /api/v1.0/<start> and /api/v1.0/<start>/<end>
+@app.route("/api/v1.0/<start>")
+def start(start):
+    session=Session(engine)
 
+    results = session.query(Measurement.date, func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start).group_by(Measurement.date).order_by(Measurement.date.asc()).all()
+
+    all_results = []
+    for result in results:
+        result_dict = {}
+        result_dict['date'] = result[0]
+        result_dict['min tobs'] = result[1]
+        result_dict['max tobs'] = result[2]
+        result_dict['avg tobs'] = result[3]
+        all_results.append(result_dict)
+    #print(results)
+    return jsonify(all_results)
+
+@app.route("/api/v1.0/<start>/<end>")
+def startend(start,end):
+    session=Session(engine)
+
+    results = session.query(Measurement.date, func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).group_by(Measurement.date).order_by(Measurement.date.asc()).all()
+
+    all_results = []
+    for result in results:
+        result_dict = {}
+        result_dict['date'] = result[0]
+        result_dict['min tobs'] = result[1]
+        result_dict['max tobs'] = result[2]
+        result_dict['avg tobs'] = result[3]
+        all_results.append(result_dict)
+    #print(results)
+    return jsonify(all_results)
 
 if __name__ == '__main__':
     app.run(debug=True)
