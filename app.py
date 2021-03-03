@@ -42,17 +42,48 @@ def precipitation():
     session=Session(engine)
 
     query_date = dt.date(2017, 8, 23) - dt.timedelta(days=365)
-    twelve_months = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date > query_date).order_by(Measurement.date).all()
+    results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date > query_date).order_by(Measurement.date).all()
+
+    session.close()
+
+    all_results=[]
+    for result in results:
+        result_dict = {}
+        result_dict["date"] = result[0]
+        result_dict["prcp"] = result[1]
+        all_results.append(result_dict)
+
+    #print(twelve_months)
+    #results = list(twelve_months)
+    return jsonify(all_results)
+
+# /api/v1.0/stations
+@app.route("/api/v1.0/stations")
+def stations():
+    session=Session(engine)
+
+    stations = session.query(Measurement.station.distinct()).all()
 
     session.close()
 
     #print(twelve_months)
-    results = list(np.ravel(twelve_months))
+    results = list(stations)
     return jsonify(results)
 
-# /api/v1.0/stations
-
 # /api/v1.0/tobs
+@app.route("/api/v1.0/tobs")
+def tobs():
+    session=Session(engine)
+
+    most_active = "USC00519281"
+    most_act_query_date = dt.date(2017, 8, 18) - dt.timedelta(days=365)
+    most_act_twelve_months = session.query(Measurement.date, Measurement.tobs).filter(Measurement.date > most_act_query_date).filter(Measurement.station == most_active).order_by(Measurement.date).all()
+
+    session.close()
+
+    #print(twelve_months)
+    results = list(most_act_twelve_months)
+    return jsonify(results)
 
 # /api/v1.0/<start> and /api/v1.0/<start>/<end>
 
