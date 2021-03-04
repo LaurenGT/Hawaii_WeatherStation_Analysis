@@ -117,6 +117,8 @@ def startend(start,end):
     all_ranged_results = []
 
     if start is True and end is False:
+        # start= start.replace.dt.date('%Y, %m, %d')
+        # end= dt.datetime(end, '%Y, %m, %d')
         for result in start_results:
             start_result_dict = {}
             start_result_dict['date'] = result[0]
