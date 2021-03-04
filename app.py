@@ -109,18 +109,38 @@ def start(start):
 def startend(start,end):
     session=Session(engine)
 
-    results = session.query(Measurement.date, func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).group_by(Measurement.date).order_by(Measurement.date.asc()).all()
+    start_results = session.query(Measurement.date, func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start).group_by(Measurement.date).order_by(Measurement.date.asc()).all()
 
-    all_results = []
-    for result in results:
-        result_dict = {}
-        result_dict['date'] = result[0]
-        result_dict['min tobs'] = result[1]
-        result_dict['max tobs'] = result[2]
-        result_dict['avg tobs'] = result[3]
-        all_results.append(result_dict)
-    #print(results)
-    return jsonify(all_results)
+    ranged_results = session.query(Measurement.date, func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).group_by(Measurement.date).order_by(Measurement.date.asc()).all()
+
+    all_start_results = []
+    all_ranged_results = []
+
+    if start is True and end is False:
+        for result in start_results:
+            start_result_dict = {}
+            start_result_dict['date'] = result[0]
+            start_result_dict['min tobs'] = result[1]
+            start_result_dict['max tobs'] = result[2]
+            start_result_dict['avg tobs'] = result[3]
+            all_start_results.append(start_result_dict)
+        # print(results)
+        return jsonify(all_start_results)
+
+    elif start and end:
+        for result in ranged_results:
+            ranged_result_dict = {}
+            ranged_result_dict['date'] = result[0]
+            ranged_result_dict['min tobs'] = result[1]
+            ranged_result_dict['max tobs'] = result[2]
+            ranged_result_dict['avg tobs'] = result[3]
+            all_ranged_results.append(ranged_result_dict)
+        # print(results)
+        return jsonify(all_ranged_results)
+
+    else:
+        return jsonify({"error": "date not entered or date no found"}), 404
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
