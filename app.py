@@ -49,8 +49,6 @@ def precipitation():
     all_results=[]
     for result in results:
         result_dict = {result[0]:result[1]}
-        # result_dict. = result[0]
-        # result_dict.values()[result] = result[1]
         all_results.append(result_dict)
 
     #print(twelve_months)
@@ -81,7 +79,8 @@ def tobs():
     session.close()
     all_tobs = []
     for result in most_act_twelve_months:
-        all_tobs.append(result[1])
+        tobs_dict = {result[0]:result[1]}
+        all_tobs.append(tobs_dict)
 
     #print(most_act_twelve_months)
     return jsonify(all_tobs)
