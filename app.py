@@ -48,9 +48,9 @@ def precipitation():
 
     all_results=[]
     for result in results:
-        result_dict = {}
-        result_dict["date"] = result[0]
-        result_dict["prcp"] = result[1]
+        result_dict = {result[0]:result[1]}
+        # result_dict. = result[0]
+        # result_dict.values()[result] = result[1]
         all_results.append(result_dict)
 
     #print(twelve_months)
@@ -84,7 +84,6 @@ def tobs():
         all_tobs.append(result[1])
 
     #print(most_act_twelve_months)
-    #results = list(np.ravel(most_act_twelve_months))
     return jsonify(all_tobs)
 
 # /api/v1.0/<start> and /api/v1.0/<start>/<end>
@@ -102,6 +101,7 @@ def start(start):
         result_dict['max tobs'] = result[2]
         result_dict['avg tobs'] = result[3]
         all_results.append(result_dict)
+    
     #print(results)
     return jsonify(all_results)
 
@@ -117,8 +117,6 @@ def startend(start,end):
     all_ranged_results = []
 
     if start is True and end is False:
-        # start= start.replace.dt.date('%Y, %m, %d')
-        # end= dt.datetime(end, '%Y, %m, %d')
         for result in start_results:
             start_result_dict = {}
             start_result_dict['date'] = result[0]
@@ -126,6 +124,7 @@ def startend(start,end):
             start_result_dict['max tobs'] = result[2]
             start_result_dict['avg tobs'] = result[3]
             all_start_results.append(start_result_dict)
+        
         # print(results)
         return jsonify(all_start_results)
 
@@ -137,11 +136,12 @@ def startend(start,end):
             ranged_result_dict['max tobs'] = result[2]
             ranged_result_dict['avg tobs'] = result[3]
             all_ranged_results.append(ranged_result_dict)
+        
         # print(results)
         return jsonify(all_ranged_results)
 
     else:
-        return jsonify({"error": "date not entered or date no found"}), 404
+        return jsonify({"error": "date not entered correctly (YYYY-MM-DD) or date no found"}), 404
     
 
 if __name__ == '__main__':
